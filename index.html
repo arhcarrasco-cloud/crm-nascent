@@ -234,6 +234,7 @@ function checkUrlError(){
   if(err){ history.replaceState(null,"",location.pathname); return decodeURIComponent(err.replace(/\+/g," ")); }
   return null;
 }
+function cleanUrl(){ if(location.search||location.hash){ try{ history.replaceState(null,"",location.pathname); }catch(e){} } }
 
 /* ---------- Data layer (Supabase) ---------- */
 async function loadAll(manual){
@@ -396,12 +397,15 @@ function exportCSV(){
 }
 
 /* ---------- Init ---------- */
+sb.auth.onAuthStateChange((event, s)=>{
+  if(s){ showApp(s); cleanUrl(); }
+  else if(event==="SIGNED_OUT"){ ready=false; db={medios:[],startups:[]}; showGate(); }
+});
 (async function init(){
   const urlErr=checkUrlError();
   const { data:{ session } } = await sb.auth.getSession();
-  if(session) showApp(session);
+  if(session){ showApp(session); cleanUrl(); }
   else showGate(urlErr ? "No se pudo iniciar sesión. Verifica que uses un correo autorizado de nascent.vc." : null);
-  sb.auth.onAuthStateChange((_e, s)=>{ if(s) showApp(s); else showGate(); });
 })();
 setInterval(()=>{ if(!ready) return; if(document.activeElement && (document.activeElement.isContentEditable||document.activeElement.tagName==="SELECT"||document.activeElement.tagName==="INPUT")) return; loadAll(false); }, 25000);
 window.addEventListener("focus",()=>{ if(ready) loadAll(false); });
