@@ -103,6 +103,50 @@
   .gbtn svg{width:18px;height:18px}
   .gnote{margin-top:18px;font-size:12px;color:var(--text3)}
   .gerr{margin-top:16px;font-size:13px;color:#c0392b;background:#fdecea;border:1px solid #f5c6cb;border-radius:8px;padding:10px 12px;display:none}
+
+  /* ---------- Mobile / adaptive ---------- */
+  @media (max-width:760px){
+    .wrap{padding:16px 12px 60px}
+    .gate{padding:16px;min-height:88vh}
+    .card-login{padding:30px 22px}
+    .brandbar{flex-wrap:wrap;gap:8px 10px}
+    .brandbar .sep{display:none}
+    .title{font-size:19px}
+    .who{margin-left:auto;font-size:12px;gap:8px}
+    .subtitle{font-size:12px;margin:4px 0 16px}
+    .tabs{gap:0}
+    .tab{padding:8px 10px;font-size:14px}
+    .toolbar{gap:6px;padding:6px 0}
+    .views{order:1}
+    .saving{order:2;min-width:0;flex-basis:100%}
+    .search{order:3;flex:1 1 100%;width:auto}
+    select.filter{order:4;flex:1 1 47%}
+    .btn{order:5;flex:1 1 30%;text-align:center}
+    .stats{gap:8px 14px;font-size:11px;margin-bottom:12px}
+
+    /* table -> stacked cards */
+    .tablewrap{border:none;overflow:visible;border-radius:0}
+    table{min-width:0;width:100%}
+    thead{display:none}
+    table,tbody,tr,td{display:block;width:100%}
+    tr{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;padding:6px 10px 8px;background:#fff}
+    tr:hover td{background:transparent}
+    td{border:none;padding:5px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+       white-space:normal !important;max-width:none !important;min-width:0 !important;border-bottom:1px solid var(--line2)}
+    td:last-child{border-bottom:none}
+    td::before{content:attr(data-label);font-weight:600;color:var(--text2);flex:0 0 40%;font-size:12px}
+    td.comp{font-size:16px;padding-top:8px}
+    td.comp::before{align-self:center}
+    td[contenteditable]{text-align:right}
+    td.delcell{justify-content:flex-end;padding-top:8px}
+    td.delcell::before{display:none}
+    .del{visibility:visible;font-size:18px}
+    select.cell{max-width:58%}
+    a{word-break:break-all}
+
+    /* board: one column at a time */
+    .col{min-width:84vw;max-width:84vw}
+  }
 </style>
 </head>
 <body>
@@ -345,8 +389,8 @@ function tableHTML(rows){
   rows.forEach(r=>{
     h+='<tr>'+cols.map(c=>{
       const editable=!c.type||c.type==="mail";
-      return `<td class="${c.cls||''}" ${editable?`contenteditable spellcheck="false" onblur="patch('${r.id}','${c.f}',this.innerText.trim(),false)"`:''} style="${c.wide?'min-width:240px;max-width:340px;white-space:normal':''}">${cellHTML(tab,c,r)}</td>`;
-    }).join("")+`<td><span class="del" onclick="delRow('${r.id}')" title="Eliminar">×</span></td></tr>`;
+      return `<td class="${c.cls||''}" data-label="${esc(c.h)}" ${editable?`contenteditable spellcheck="false" onblur="patch('${r.id}','${c.f}',this.innerText.trim(),false)"`:''} style="${c.wide?'min-width:240px;max-width:340px;white-space:normal':''}">${cellHTML(tab,c,r)}</td>`;
+    }).join("")+`<td data-label="" class="delcell"><span class="del" onclick="delRow('${r.id}')" title="Eliminar">×</span></td></tr>`;
   });
   h+='</tbody></table></div>'; return h;
 }
